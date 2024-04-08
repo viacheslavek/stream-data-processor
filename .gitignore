@@ -118,6 +118,10 @@ fabric.properties
 
 # Go workspace file
 go.work
+go.sum
 
 # env file
 *.env
+
+# volumes
+data_volumes/*
