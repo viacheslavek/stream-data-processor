@@ -9,7 +9,7 @@ import (
 )
 
 func main() {
-	fmt.Println("Hello project")
+	fmt.Println("Hello project?")
 
 	if errLE := app.LoadEnv(); errLE != nil {
 		log.Fatalf("failed load env: %e", errLE)
