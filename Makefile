@@ -16,11 +16,3 @@ buildRedis:
 .PHONY: buildCassandra
 buildCassandra:
 	docker compose -f docker-compose.yml up -d cassandra
-
-.PHONY: buildKafka
-buildKafka:
-	docker compose -f docker-compose.yml up -d kafka
-
-.PHONY: buildBoltdb
-buildBoltdb:
-	docker compose -f docker-compose.yml up -d boltdb

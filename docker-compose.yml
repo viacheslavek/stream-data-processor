@@ -1,25 +1,30 @@
 version: "3.9"
 services:
   postgres:
+    image: timescale/timescaledb:latest-pg13
+    environment:
+      POSTGRES_DB: "${POSTGRES_DB}"
+      POSTGRES_USER: "${POSTGRES_USER}"
+      POSTGRES_PASSWORD: "${POSTGRES_PASSWORD}"
+    ports:
+      - "5432:5432"
     volumes:
-      - ./data_volumes/postgres/data:/var/lib/postgresql/data
-      
-  redis:
-    volumes:
-      - ./data_volumes/redis/data:/var/???
-  
-  cassandra:
-    volumes:
-      - ./data_volumes/cassandra/data:/var/???
-        
-  kafka:
-    volumes:
-      - ./data_volumes/kafka/data:/var/???
-        
-  boltdb:
-    volumes:
-      - ./data_volumes/boltdb/data:/var/???
-        
+      - ./data_volumes/postgresdb/data:/var/lib/postgresql/data
 
-# TODO: сделать запуск каждой бд
+  redis:
+    image: redis:latest
+    ports:
+      - "6379:6379"
+    volumes:
+      - ./data_volumes/redis/data:/data
+
+  cassandra:
+    image: cassandra:latest
+    environment:
+      CASSANDRA_SEEDS: cassandra
+    ports:
+      - "9042:9042"
+    volumes:
+      - ./data_volumes/cassandra/data:/var/lib/cassandra
+
 
