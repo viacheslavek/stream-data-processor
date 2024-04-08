@@ -124,4 +124,6 @@ go.sum
 *.env
 
 # volumes
-data_volumes/*
+data_volumes/boltdb/*
+data_volumes/postgres/*
+data_volumes/redis/*

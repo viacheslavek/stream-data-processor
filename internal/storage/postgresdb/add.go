@@ -1,3 +1,3 @@
-package cassandra
+package postgresdb
 
 // TODO: реализую методы интерфейса (Позже будет несколько файлов по смыслу операций)
