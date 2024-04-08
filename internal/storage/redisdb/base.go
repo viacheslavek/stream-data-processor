@@ -2,9 +2,10 @@ package redisdb
 
 import (
 	"fmt"
-	"github.com/go-redis/redis"
 	"log"
 	"os"
+
+	"github.com/go-redis/redis"
 )
 
 type Storage struct {

@@ -18,10 +18,13 @@ services:
     volumes:
       - ./data_volumes/redis/data:/data
 
-# TODO: сделать запуск redis и cassandradb
-#  cassandradb:
-#    volumes:
-#      - ./data_volumes/cassandradb/data:/var/???
-#
-#
+  cassandra:
+    image: cassandra:latest
+    environment:
+      CASSANDRA_SEEDS: cassandra
+    ports:
+      - "9042:9042"
+    volumes:
+      - ./data_volumes/cassandra/data:/var/lib/cassandra
+
 
