@@ -12,6 +12,7 @@
 .idea/modules.xml
 .idea/vcs.xml
 .idea/stream-data-processor.iml
+.idea/dataSources.xml
 
 # AWS User-specific
 .idea/**/aws.xml
@@ -127,3 +128,4 @@ go.sum
 data_volumes/boltdb/*
 data_volumes/postgres/*
 data_volumes/redis/*
+data_volumes/cassandra/*
