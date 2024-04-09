@@ -24,11 +24,18 @@ func main() {
 	//	log.Fatalf("run is failed %e", err)
 	//}
 
-	nspg := datagen.NewStreamsGenerator(datagen.NewStreamParams(10, 10, 1000))
+	nspg := datagen.NewStreamsGenerator(datagen.NewStreamParams(10, 5, 100))
 
-	points := nspg.GenerateStreams()
+	points := nspg.GenerateStreamChannel(make(chan struct{}))
 
-	fmt.Println(points)
+	i := 0
+	for p := range points {
+		i++
+		fmt.Println("i:", i, "p:", p.GetTimestamp().UnixMicro())
+		fmt.Println(p.GetPoints())
+	}
+
+	fmt.Println("ура отлично работает")
 
 	fmt.Println("Bye project")
 }

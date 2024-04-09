@@ -1,11 +1,13 @@
 package datagen
 
 import (
-	"fmt"
+	"math/rand"
 	"time"
 
 	"github.com/VyacheslavIsWorkingNow/stream-data-processor/internal"
 )
+
+const MaxPointCoordinate = 255999
 
 type StreamsGenerator struct {
 	StreamParams
@@ -26,7 +28,8 @@ func (ssg *StreamsGenerator) GenerateStreamChannel(cancel <-chan struct{}) <-cha
 
 		for i := 0; i < ssg.countStreams; i++ {
 			select {
-			case out <- generateRealStream(ticker, ssg.lenStream):
+			case out <- generateStream(time.Now(), ssg.lenStream):
+				<-ticker.C
 			case <-cancel:
 				return
 			}
@@ -36,18 +39,37 @@ func (ssg *StreamsGenerator) GenerateStreamChannel(cancel <-chan struct{}) <-cha
 	return out
 }
 
-func generateRealStream(ticker *time.Ticker, lenStream int) internal.Stream {
-	// TODO: доделать: генерирую timestamp через ticker + массив точек
-	return internal.Stream{}
+func generateStream(timestamp time.Time, lenStream int) internal.Stream {
+	return internal.NewStream(getRandomPoints(lenStream), timestamp)
+}
+
+func getRandomPoints(lenStream int) []internal.Point {
+	points := make([]internal.Point, lenStream)
+
+	for i := 0; i < lenStream; i++ {
+		points[i] = getRandomPoint()
+	}
+	return points
+}
+
+// INFO: Получаю совсем случайную точку
+func getRandomPoint() internal.Point {
+	return internal.NewPoint(
+		float64(rand.Intn(MaxPointCoordinate))/1000.0,
+		float64(rand.Intn(MaxPointCoordinate))/1000.0,
+	)
 }
 
 func (ssg *StreamsGenerator) GenerateStreams() []internal.Stream {
-	fmt.Println("gen streams")
-	fmt.Println("ssg:", *ssg)
-	return make([]internal.Stream, 0)
-}
+	streams := make([]internal.Stream, ssg.countStreams)
 
-func generateFakeStream(countStreams, lenStream int) []internal.Stream {
-	// TODO: доделать: генерирую timestamp руками + массив точек
-	return make([]internal.Stream, 0)
+	startTimestamp := time.Now()
+
+	for i := 0; i < ssg.countStreams; i++ {
+		streams[i] = generateStream(
+			startTimestamp.Add(time.Millisecond*time.Duration(ssg.miniSecPeriod*i)),
+			ssg.lenStream,
+		)
+	}
+	return streams
 }
