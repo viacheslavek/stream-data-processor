@@ -2,28 +2,33 @@ package main
 
 import (
 	"fmt"
-	"github.com/VyacheslavIsWorkingNow/stream-data-processor/internal/storage/cassandradb"
 	"log"
 
 	"github.com/VyacheslavIsWorkingNow/stream-data-processor/internal/app"
+	"github.com/VyacheslavIsWorkingNow/stream-data-processor/internal/datagen"
 )
 
 func main() {
-	fmt.Println("Hello project?")
+	fmt.Println("Hello project")
 
 	if errLE := app.LoadEnv(); errLE != nil {
 		log.Fatalf("failed load env: %e", errLE)
 	}
 
-	ps, err := cassandradb.New()
+	//ps, errN := cassandradb.New()
+	//if errN != nil {
+	//	log.Fatalf("new is failed %e", errN)
+	//}
 
-	if err != nil {
-		log.Fatalf("new is failed %e", err)
-	}
+	//if err := app.Run(ps); err != nil {
+	//	log.Fatalf("run is failed %e", err)
+	//}
 
-	if err := app.Run(ps); err != nil {
-		log.Fatalf("run is failed %e", err)
-	}
+	nspg := datagen.NewStreamsGenerator(datagen.NewStreamParams(10, 10, 1000))
+
+	points := nspg.GenerateStreams()
+
+	fmt.Println(points)
 
 	fmt.Println("Bye project")
 }

@@ -1,4 +1,22 @@
 package datagen
 
-// TODO: Так как это исследование связано с визуализатором, то генерировать я буду двумерные точки с timestamp,
-// так я смогу убедится в правильной последовательности
+import "github.com/VyacheslavIsWorkingNow/stream-data-processor/internal"
+
+type StreamParams struct {
+	countStreams  int
+	lenStream     int
+	miniSecPeriod int
+}
+
+func NewStreamParams(countStreams, lenStream, miniSecPeriod int) StreamParams {
+	return StreamParams{
+		countStreams:  countStreams,
+		lenStream:     lenStream,
+		miniSecPeriod: miniSecPeriod,
+	}
+}
+
+type GetStreams interface {
+	GenerateStreamChannel(cancel <-chan struct{}) <-chan internal.Stream
+	GenerateStreams() []internal.Stream
+}

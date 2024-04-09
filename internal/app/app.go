@@ -2,8 +2,10 @@ package app
 
 import (
 	"fmt"
-	"github.com/VyacheslavIsWorkingNow/stream-data-processor/internal/storage"
+
 	"github.com/joho/godotenv"
+
+	"github.com/VyacheslavIsWorkingNow/stream-data-processor/internal/storage"
 )
 
 func LoadEnv() error {
