@@ -1,8 +1,6 @@
 package internal
 
-import (
-	"time"
-)
+import "time"
 
 type Point struct {
 	x float64

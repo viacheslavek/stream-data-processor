@@ -2,10 +2,10 @@ package main
 
 import (
 	"fmt"
+	"github.com/VyacheslavIsWorkingNow/stream-data-processor/internal/storage/postgresdb"
 	"log"
 
 	"github.com/VyacheslavIsWorkingNow/stream-data-processor/internal/app"
-	"github.com/VyacheslavIsWorkingNow/stream-data-processor/internal/datagen"
 )
 
 func main() {
@@ -15,24 +15,13 @@ func main() {
 		log.Fatalf("failed load env: %e", errLE)
 	}
 
-	//ps, errN := cassandradb.New()
-	//if errN != nil {
-	//	log.Fatalf("new is failed %e", errN)
-	//}
+	ps, errN := postgresdb.New()
+	if errN != nil {
+		log.Fatalf("new is failed %e", errN)
+	}
 
-	//if err := app.Run(ps); err != nil {
-	//	log.Fatalf("run is failed %e", err)
-	//}
-
-	nspg := datagen.NewStreamsGenerator(datagen.NewStreamParams(10, 5, 100))
-
-	points := nspg.GenerateStreamChannel(make(chan struct{}))
-
-	i := 0
-	for p := range points {
-		i++
-		fmt.Println("i:", i, "p:", p.GetTimestamp().UnixMicro())
-		fmt.Println(p.GetPoints())
+	if err := app.Run(ps); err != nil {
+		log.Fatalf("run is failed %e", err)
 	}
 
 	fmt.Println("ура отлично работает")

@@ -44,5 +44,94 @@ func (s *Storage) Ping() error {
 		return fmt.Errorf("Ping is failed: %w\n", err)
 	}
 	log.Println("Postgres ping success")
+
+	var greeting string
+	err := s.conn.QueryRow(context.Background(), "select 'Hello, world!'").Scan(&greeting)
+	if err != nil {
+		return fmt.Errorf("QueryRow failed: %w\n", err)
+	}
+
+	log.Println("QueryRow success")
+
+	return nil
+}
+
+func (s *Storage) Close() error {
+	err := s.conn.Close(s.ctx)
+	if err != nil {
+		return fmt.Errorf("can't close connection %e\n", err)
+	}
+	return nil
+}
+
+func (s *Storage) Init() error {
+	q := `
+		CREATE TABLE IF NOT EXISTS stream (
+			time_point timestamptz primary key,
+			points point[]
+		);
+	`
+
+	return s.initBase(s.ctx, q)
+}
+
+func (s *Storage) initBase(ctx context.Context, query string) error {
+	_, err := s.conn.Exec(
+		ctx,
+		query,
+	)
+
+	if err != nil {
+		return fmt.Errorf("can't create tables %w", err)
+	}
+
+	return nil
+}
+
+func (s *Storage) Drop() error {
+	q := `
+		DROP TABLE IF EXISTS stream;
+	`
+
+	return s.drop(s.ctx, q)
+}
+
+func (s *Storage) drop(ctx context.Context, query string) error {
+	_, err := s.conn.Exec(
+		ctx,
+		query,
+	)
+	if err != nil {
+		return fmt.Errorf("can't drop tables %w", err)
+	}
+
+	return nil
+}
+
+func (s *Storage) Info() {
+	q := `
+		SELECT table_catalog, table_schema, table_name
+		FROM information_schema.tables
+		WHERE table_name = 'stream';
+	`
+
+	err := s.info(s.ctx, q)
+	if err != nil {
+		log.Fatalf("info failed: %e", err)
+	}
+}
+
+func (s *Storage) info(ctx context.Context, query string) error {
+	output, err := s.conn.Query(
+		ctx,
+		query,
+	)
+	if err != nil {
+		return fmt.Errorf("can't drop tables %w", err)
+	}
+
+	log.Println("info output")
+	log.Println(output.RawValues())
+
 	return nil
 }
