@@ -3,16 +3,16 @@ package internal
 import "time"
 
 type Point struct {
-	x float64
-	y float64
+	X float64
+	Y float64
 }
 
 func (p *Point) GetX() float64 {
-	return p.x
+	return p.X
 }
 
 func (p *Point) GetY() float64 {
-	return p.y
+	return p.Y
 }
 
 func NewPoint(x, y float64) Point {
