@@ -8,6 +8,8 @@ import (
 	"github.com/go-redis/redis"
 )
 
+const streamName = "points_stream"
+
 type Storage struct {
 	client *redis.Client
 }
@@ -40,4 +42,36 @@ func (s *Storage) Ping() error {
 	}
 	log.Println("Redis ping success")
 	return nil
+}
+
+func (s *Storage) Close() error {
+	if s.client != nil {
+		err := s.client.Close()
+		if err != nil {
+			return fmt.Errorf("failed to close client: %w", err)
+		}
+	}
+	return nil
+}
+
+func (s *Storage) Init() error {
+	if s.client.Exists(streamName).Val() == 0 {
+		if err := s.client.XGroupCreateMkStream(
+			streamName, "points_group", "$").Err(); err != nil {
+			return fmt.Errorf("failed to create stream %w", err)
+		}
+	}
+
+	return nil
+}
+
+func (s *Storage) Drop() error {
+	if err := s.client.Del(streamName).Err(); err != nil {
+		return fmt.Errorf("failed to delete stream %w", err)
+	}
+	return nil
+}
+
+func (s *Storage) Info() {
+	log.Println("redis")
 }

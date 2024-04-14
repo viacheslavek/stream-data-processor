@@ -1,10 +1,14 @@
 package internal
 
-import "time"
+import (
+	"encoding/json"
+	"fmt"
+	"time"
+)
 
 type Point struct {
-	X float64
-	Y float64
+	X float64 `json:"x"`
+	Y float64 `json:"y"`
 }
 
 func (p *Point) GetX() float64 {
@@ -34,4 +38,24 @@ func (s *Stream) GetTimestamp() time.Time {
 
 func NewStream(points []Point, timestamp time.Time) Stream {
 	return Stream{points, timestamp}
+}
+
+type Points []Point
+
+func (pts Points) MarshalBinary() ([]byte, error) {
+	data, err := json.Marshal(pts)
+
+	if err != nil {
+		return nil, fmt.Errorf("failed to marshal point: %w", err)
+	}
+
+	return data, nil
+}
+
+func (pts *Points) UnmarshalBinary(data []byte) error {
+	if err := json.Unmarshal(data, pts); err != nil {
+		return fmt.Errorf("failed to unmarshal points %w", err)
+	}
+
+	return nil
 }

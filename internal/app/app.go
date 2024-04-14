@@ -16,11 +16,11 @@ func LoadEnv() error {
 
 func Run(storage storage.Storage) error {
 
-	//errP := storage.Ping()
-	//if errP != nil {
-	//	return fmt.Errorf("ping err: %w", errP)
-	//}
-	//
+	errP := storage.Ping()
+	if errP != nil {
+		return fmt.Errorf("ping err: %w", errP)
+	}
+
 	//time.Sleep(time.Millisecond * 500)
 	//errI := storage.Init()
 	//if errI != nil {
@@ -30,7 +30,7 @@ func Run(storage storage.Storage) error {
 	//time.Sleep(time.Millisecond * 500)
 	//log.Println("init success")
 	//
-	//p1, p2 := internal.NewPoint(0.1, 1.1), internal.NewPoint(2.2, 2.3)
+	//p1, p2 := internal.NewPoint(0.2, 1.1), internal.NewPoint(3.2, 2.3)
 	//errA := storage.AddStream(internal.NewStream([]internal.Point{p1, p2}, time.Now()))
 	//if errA != nil {
 	//	return fmt.Errorf("add err: %w", errA)
@@ -60,7 +60,6 @@ func Run(storage storage.Storage) error {
 	time.Sleep(time.Millisecond * 500)
 	fmt.Println("streams:", streams)
 	log.Println("get success")
-
 	//errD := storage.Drop()
 	//if errD != nil {
 	//	return fmt.Errorf("drop err: %w", errD)

@@ -2,7 +2,7 @@ package main
 
 import (
 	"fmt"
-	"github.com/VyacheslavIsWorkingNow/stream-data-processor/internal/storage/cassandradb"
+	"github.com/VyacheslavIsWorkingNow/stream-data-processor/internal/storage/redisdb"
 	"log"
 
 	"github.com/VyacheslavIsWorkingNow/stream-data-processor/internal/app"
@@ -15,7 +15,7 @@ func main() {
 		log.Fatalf("failed load env: %e", errLE)
 	}
 
-	ps, errN := cassandradb.New()
+	ps, errN := redisdb.New()
 	if errN != nil {
 		log.Fatalf("new is failed %e", errN)
 	}
