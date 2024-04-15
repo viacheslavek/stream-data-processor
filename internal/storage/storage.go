@@ -1,13 +1,16 @@
 package storage
 
-// INFO: есть два подхода, как делать это исследование:
-// Или написать полный интерфейс сразу и делать каждый storage по очереди, или же к каждому storage
-// постепенно добавлять разные методы и расширять интерфейс так же постепенно.
-// Я склоняюсь ко второму варианту, так как в этом случае я точно успею произвести сравнение на разных сущностях
-// и число параметров сравнения будет зависеть от того, как я все успеваю.
-// Поэтому интерфейс я буду писать и расширять уже после подъема всех бд
+import (
+	"github.com/VyacheslavIsWorkingNow/stream-data-processor/internal"
+	"time"
+)
 
-// Storage TODO: Придумать методы интерфейса
 type Storage interface {
 	Ping() error
+	Close() error
+	Init() error
+	Drop() error
+	AddStream(stream internal.Stream) error
+	GetStreamRange(from, to time.Time) ([]internal.Stream, error)
+	Info()
 }

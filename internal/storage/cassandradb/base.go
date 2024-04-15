@@ -17,10 +17,9 @@ type Storage struct {
 const Url = "CASSANDRA_URL"
 
 func New() (*Storage, error) {
-
 	cassandraURL := os.Getenv(Url)
 	if len(cassandraURL) == 0 {
-		log.Fatalf("postgresURL not find")
+		log.Fatalf("cassandraURL not find")
 	}
 
 	cluster := gocql.NewCluster(cassandraURL)
@@ -43,6 +42,58 @@ func (s *Storage) Ping() error {
 	if err := s.session.Query(pingQuery).WithContext(s.ctx).Exec(); err != nil {
 		return fmt.Errorf("Ping is failed: %w\n", err)
 	}
+
 	log.Println("Cassandra ping success")
 	return nil
+}
+
+func (s *Storage) Close() error {
+	if s.session != nil {
+		s.session.Close()
+	}
+	return nil
+}
+
+func (s *Storage) Init() error {
+	queryCreateKeyspace := `
+		CREATE KEYSPACE IF NOT EXISTS streams WITH replication = {
+    		'class': 'SimpleStrategy',
+    		'replication_factor': 1
+    	};
+	`
+
+	if err := s.session.Query(queryCreateKeyspace).Exec(); err != nil {
+		return fmt.Errorf("failed to create keyspace %w", err)
+	}
+
+	queryCreateTable := `
+		CREATE TABLE IF NOT EXISTS streams.stream (
+    		cluster text,
+    		time_point timestamp,
+    		points list<tuple<double, double>>,
+    		PRIMARY KEY (cluster, time_point)
+		);
+	`
+
+	if err := s.session.Query(queryCreateTable).Exec(); err != nil {
+		return fmt.Errorf("failed to create table %w", err)
+	}
+
+	return nil
+}
+
+func (s *Storage) Drop() error {
+	q := `
+		DROP TABLE IF EXISTS streams.stream;
+	`
+
+	if err := s.session.Query(q).Exec(); err != nil {
+		return fmt.Errorf("failed to drop table %w", err)
+	}
+
+	return nil
+}
+
+func (s *Storage) Info() {
+	log.Println("cassandra")
 }
