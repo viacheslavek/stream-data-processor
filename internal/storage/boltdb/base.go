@@ -2,6 +2,7 @@ package boltdb
 
 import (
 	"context"
+	"fmt"
 	"log"
 
 	"github.com/boltdb/bolt"
@@ -12,7 +13,10 @@ type Storage struct {
 	ctx context.Context
 }
 
-const dbPath = "./data_volumes/boltdb/data.db"
+const (
+	dbPath     = "./data_volumes/boltdb/data.db"
+	bucketName = "streams"
+)
 
 func New() (*Storage, error) {
 	db, err := bolt.Open(dbPath, 0600, nil)
@@ -21,7 +25,7 @@ func New() (*Storage, error) {
 		return &Storage{}, err
 	}
 
-	log.Println("Boltdb database init")
+	log.Println("Boltdb database create")
 
 	return &Storage{
 		db:  db,
@@ -29,7 +33,48 @@ func New() (*Storage, error) {
 	}, nil
 }
 
-func (S *Storage) Ping() error {
-	log.Println("Boltdb always available")
+func (s *Storage) Ping() error {
+	log.Println("boltdb always ready")
 	return nil
+}
+
+func (s *Storage) Close() error {
+	if s.db != nil {
+		if err := s.db.Close(); err != nil {
+			return fmt.Errorf("failed to close boltDB %w", err)
+		}
+	}
+	return nil
+}
+
+func (s *Storage) Init() error {
+	if err := s.db.Update(func(tx *bolt.Tx) error {
+		if _, err := tx.CreateBucketIfNotExists([]byte(bucketName)); err != nil {
+			return err
+		}
+		return nil
+	}); err != nil {
+		return fmt.Errorf("failed create bucket %w", err)
+	}
+	return nil
+}
+
+func (s *Storage) Drop() error {
+	if err := s.db.Update(func(tx *bolt.Tx) error {
+		if bucketExist := tx.Bucket([]byte(bucketName)); bucketExist == nil {
+			return nil
+		}
+
+		if err := tx.DeleteBucket([]byte(bucketName)); err != nil {
+			return err
+		}
+		return nil
+	}); err != nil {
+		return fmt.Errorf("failed create bucket %w", err)
+	}
+	return nil
+}
+
+func (s *Storage) Info() {
+	log.Println("cassandra")
 }

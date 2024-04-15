@@ -17,7 +17,6 @@ type Storage struct {
 const Url = "CASSANDRA_URL"
 
 func New() (*Storage, error) {
-
 	cassandraURL := os.Getenv(Url)
 	if len(cassandraURL) == 0 {
 		log.Fatalf("cassandraURL not find")

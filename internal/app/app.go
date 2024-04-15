@@ -7,6 +7,8 @@ import (
 
 	"github.com/joho/godotenv"
 
+	"github.com/VyacheslavIsWorkingNow/stream-data-processor/internal"
+
 	"github.com/VyacheslavIsWorkingNow/stream-data-processor/internal/storage"
 )
 
@@ -15,29 +17,28 @@ func LoadEnv() error {
 }
 
 func Run(storage storage.Storage) error {
-
 	errP := storage.Ping()
 	if errP != nil {
 		return fmt.Errorf("ping err: %w", errP)
 	}
 
-	//time.Sleep(time.Millisecond * 500)
-	//errI := storage.Init()
-	//if errI != nil {
-	//	return fmt.Errorf("init err: %w", errI)
-	//}
-	//
-	//time.Sleep(time.Millisecond * 500)
-	//log.Println("init success")
-	//
-	//p1, p2 := internal.NewPoint(0.2, 1.1), internal.NewPoint(3.2, 2.3)
-	//errA := storage.AddStream(internal.NewStream([]internal.Point{p1, p2}, time.Now()))
-	//if errA != nil {
-	//	return fmt.Errorf("add err: %w", errA)
-	//}
-	//
-	//time.Sleep(time.Millisecond * 1000)
-	//log.Println("add success")
+	time.Sleep(time.Millisecond * 500)
+	errI := storage.Init()
+	if errI != nil {
+		return fmt.Errorf("init err: %w", errI)
+	}
+
+	time.Sleep(time.Millisecond * 500)
+	log.Println("init success")
+
+	p1, p2 := internal.NewPoint(0.2, 1.1), internal.NewPoint(3.2, 2.3)
+	errA := storage.AddStream(internal.NewStream([]internal.Point{p1, p2}, time.Now()))
+	if errA != nil {
+		return fmt.Errorf("add err: %w", errA)
+	}
+
+	time.Sleep(time.Millisecond * 1000)
+	log.Println("add success")
 
 	timeString1 := "2023-01-01 00:00:00.000000"
 	timeString2 := "2025-01-08 00:00:00.000000"
@@ -60,14 +61,15 @@ func Run(storage storage.Storage) error {
 	time.Sleep(time.Millisecond * 500)
 	fmt.Println("streams:", streams)
 	log.Println("get success")
-	//errD := storage.Drop()
-	//if errD != nil {
-	//	return fmt.Errorf("drop err: %w", errD)
-	//}
-	//
-	//time.Sleep(time.Millisecond * 1000)
-	//
-	//log.Println("drop success")
+
+	errD := storage.Drop()
+	if errD != nil {
+		return fmt.Errorf("drop err: %w", errD)
+	}
+
+	time.Sleep(time.Millisecond * 1000)
+
+	log.Println("drop success")
 
 	errC := storage.Close()
 	if errC != nil {
