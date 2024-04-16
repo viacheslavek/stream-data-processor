@@ -75,3 +75,7 @@ func (s *Storage) Drop() error {
 func (s *Storage) Info() {
 	log.Println("redis")
 }
+
+func (s *Storage) Name() string {
+	return "redis"
+}

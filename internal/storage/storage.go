@@ -13,4 +13,5 @@ type Storage interface {
 	AddStream(stream internal.Stream) error
 	GetStreamRange(from, to time.Time) ([]internal.Stream, error)
 	Info()
+	Name() string
 }

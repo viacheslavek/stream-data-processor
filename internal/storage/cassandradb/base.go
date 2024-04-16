@@ -97,3 +97,7 @@ func (s *Storage) Drop() error {
 func (s *Storage) Info() {
 	log.Println("cassandra")
 }
+
+func (s *Storage) Name() string {
+	return "cassandra"
+}

@@ -24,7 +24,5 @@ func main() {
 		log.Fatalf("run is failed %e", err)
 	}
 
-	fmt.Println("ура отлично работает")
-
 	fmt.Println("Bye project")
 }

@@ -135,3 +135,7 @@ func (s *Storage) info(ctx context.Context, query string) error {
 
 	return nil
 }
+
+func (s *Storage) Name() string {
+	return "postgres"
+}
