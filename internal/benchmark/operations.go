@@ -11,30 +11,28 @@ import (
 )
 
 func runStreamBench(
-	f func(s storage.Storage) (time.Duration, error), s storage.Storage, bf *BenchFile, benchName string,
+	f func(s storage.Storage) error, s storage.Storage, bf *BenchFile, benchName string,
 ) error {
-	dur, err := f(s)
-	if err != nil {
+	start := time.Now()
+	if err := f(s); err != nil {
 		return err
 	}
-	bf.Durations[benchName] += dur
+	bf.Durations[benchName] += time.Since(start)
 	return nil
 }
 
-func benchInit(s storage.Storage) (time.Duration, error) {
-	start := time.Now()
+func benchInit(s storage.Storage) error {
 	if err := s.Init(); err != nil {
-		return 0, fmt.Errorf("failed init stream from init bench %w", err)
+		return fmt.Errorf("failed init stream from init bench %w", err)
 	}
-	return time.Since(start), nil
+	return nil
 }
 
-func benchAdd(s storage.Storage) (time.Duration, error) {
-	start := time.Now()
+func benchAdd(s storage.Storage) error {
 	if err := addStreams(s); err != nil {
-		return 0, fmt.Errorf("failed add stream from add bench %w", err)
+		return fmt.Errorf("failed add stream from add bench %w", err)
 	}
-	return time.Since(start), nil
+	return nil
 }
 
 func addStreams(s storage.Storage) error {
@@ -50,8 +48,7 @@ func addStreams(s storage.Storage) error {
 	return nil
 }
 
-func benchSearch(s storage.Storage) (time.Duration, error) {
-	start := time.Now()
+func benchSearch(s storage.Storage) error {
 	// TODO: заведу еще переменную startAddTime в env как UnixTime, в которую буду класть время начала для добавления
 	startAdd := time.Now()
 	countStreams, timePeriodMiliSec := 500, 100
@@ -59,11 +56,11 @@ func benchSearch(s storage.Storage) (time.Duration, error) {
 
 	for i := 0; i < nRangeSearch; i++ {
 		if _, err := s.GetStreamRange(getRangeTimestamp(startAdd, countStreams, timePeriodMiliSec)); err != nil {
-			return 0, fmt.Errorf("failed find streams from find bench %w", err)
+			return fmt.Errorf("failed find streams from find bench %w", err)
 		}
 	}
 
-	return time.Since(start), nil
+	return nil
 }
 
 func getRangeTimestamp(start time.Time, countStreams, timePeriodMiliSec int) (time.Time, time.Time) {
@@ -87,10 +84,9 @@ func getCountRangeTimestamp(timePeriodMiliSec, countStreams int) int {
 	return timePeriodMiliSec * (int(math.Sqrt(float64(countStreams))) + countStreams%50)
 }
 
-func benchDrop(s storage.Storage) (time.Duration, error) {
-	start := time.Now()
+func benchDrop(s storage.Storage) error {
 	if err := s.Drop(); err != nil {
-		return 0, fmt.Errorf("failed drop stream from drop bench %w", err)
+		return fmt.Errorf("failed drop stream from drop bench %w", err)
 	}
-	return time.Since(start), nil
+	return nil
 }
