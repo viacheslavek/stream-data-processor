@@ -6,6 +6,7 @@ import (
 
 	"github.com/joho/godotenv"
 
+	"github.com/VyacheslavIsWorkingNow/stream-data-processor/internal/benchmark"
 	"github.com/VyacheslavIsWorkingNow/stream-data-processor/internal/storage"
 )
 
@@ -17,26 +18,17 @@ func Run(s storage.Storage) error {
 
 	log.Printf("app start\n")
 
-	//bf, err := benchmark.RunBenchNCheck(storage, 100, 1000000, 1)
-	//if err != nil {
-	//	log.Fatalf("can't do bench %e\n", err)
-	//}
-	//
-	//fmt.Println("benchmark:", bf)
-	//
-	//benchPath := fmt.Sprintf("cmd/bench_result_%s.html", storage.Name())
-	//if err = bf.ConvertToHTML(benchPath); err != nil {
-	//	log.Fatalf("can't convert bf to html, %e", err)
-	//}
-
-	stat, err := storage.GetDockerMemoryUsage("stream-data-processor-postgres-1")
+	bf, err := benchmark.RunBenchNCheck(s, 10, 10, 1)
 	if err != nil {
-		return fmt.Errorf("блин блинский %w", err)
+		log.Fatalf("can't do bench %e\n", err)
 	}
 
-	fmt.Println("stat", stat)
+	fmt.Println("benchmark:", bf)
 
-	log.Println("все")
+	benchPath := fmt.Sprintf("cmd/bench_result_%s.html", s.Name())
+	if err = bf.ConvertToHTML(benchPath); err != nil {
+		log.Fatalf("can't convert bf to html, %e", err)
+	}
 
 	return nil
 }

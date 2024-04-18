@@ -14,4 +14,5 @@ type Storage interface {
 	GetStreamRange(from, to time.Time) ([]internal.Stream, error)
 	Info()
 	Name() string
+	GetUsageMemory() (uint64, error)
 }

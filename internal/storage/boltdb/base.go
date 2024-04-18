@@ -82,3 +82,8 @@ func (s *Storage) Info() {
 func (s *Storage) Name() string {
 	return "boltdb"
 }
+
+func (s *Storage) GetUsageMemory() (uint64, error) {
+	// TODO: реализовать
+	return 0, nil
+}

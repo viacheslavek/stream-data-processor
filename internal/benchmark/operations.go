@@ -38,7 +38,7 @@ func benchAdd(s storage.Storage) error {
 func addStreams(s storage.Storage) error {
 
 	// TODO: пока параметры делаю хардкодом, потом исправлю
-	streamGen := datagen.NewStreamsGenerator(datagen.NewStreamParams(1000000, 25, 100))
+	streamGen := datagen.NewStreamsGenerator(datagen.NewStreamParams(10, 10, 100))
 	streams := streamGen.GenerateStreams()
 	for _, stream := range streams {
 		if err := s.AddStream(stream); err != nil {
@@ -51,8 +51,8 @@ func addStreams(s storage.Storage) error {
 func benchSearch(s storage.Storage) error {
 	// TODO: заведу еще переменную startAddTime в env как UnixTime, в которую буду класть время начала для добавления
 	startAdd := time.Now()
-	countStreams, timePeriodMiliSec := 50000, 100
-	nRangeSearch := 1000
+	countStreams, timePeriodMiliSec := 10, 100
+	nRangeSearch := 10
 
 	for i := 0; i < nRangeSearch; i++ {
 		if _, err := s.GetStreamRange(getRangeTimestamp(startAdd, countStreams, timePeriodMiliSec)); err != nil {
@@ -89,4 +89,20 @@ func benchDrop(s storage.Storage) error {
 		return fmt.Errorf("failed drop stream from drop bench %w", err)
 	}
 	return nil
+}
+
+func runMemoryBench(s storage.Storage, u *uint64) error {
+	memoryUsage, err := s.GetUsageMemory()
+	if err != nil {
+		return fmt.Errorf("failed get memory usage in bench %w", err)
+	}
+	*u = memoryUsage
+	return nil
+}
+
+func getDifferentMemoryUsage(bm BenchMemory) uint64 {
+	if bm.FinishMemoryUsage < bm.StartMemoryUsage {
+		return 0
+	}
+	return bm.FinishMemoryUsage - bm.StartMemoryUsage
 }

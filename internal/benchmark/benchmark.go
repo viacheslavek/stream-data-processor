@@ -17,6 +17,13 @@ type BenchFile struct {
 	CountStreamPoints int
 	CountStreams      int
 	CountChecks       int
+	BenchMemory       BenchMemory
+}
+
+type BenchMemory struct {
+	StartMemoryUsage     uint64
+	FinishMemoryUsage    uint64
+	DifferentMemoryUsage uint64
 }
 
 func RunBenchNCheck(s storage.Storage, countStreamPoints, countStreams, countChecks int) (BenchFile, error) {
@@ -26,6 +33,7 @@ func RunBenchNCheck(s storage.Storage, countStreamPoints, countStreams, countChe
 		CountStreamPoints: countStreamPoints,
 		CountStreams:      countStreams,
 		CountChecks:       countChecks,
+		BenchMemory:       BenchMemory{},
 	}
 
 	if err := s.Ping(); err != nil {
@@ -50,8 +58,12 @@ func RunBenchNCheck(s storage.Storage, countStreamPoints, countStreams, countChe
 }
 
 func RunStreamBench(s storage.Storage, bf *BenchFile) error {
+	if err := runMemoryBench(s, &bf.BenchMemory.StartMemoryUsage); err != nil {
+		return fmt.Errorf("failed memory start bench: %w", err)
+	}
+
 	if err := runStreamBench(benchInit, s, bf, StreamInit); err != nil {
-		return fmt.Errorf("failed init banch: %w", err)
+		return fmt.Errorf("failed init bench: %w", err)
 	}
 
 	if err := runStreamBench(benchAdd, s, bf, AddStreams); err != nil {
@@ -59,12 +71,18 @@ func RunStreamBench(s storage.Storage, bf *BenchFile) error {
 	}
 
 	if err := runStreamBench(benchSearch, s, bf, SearchStreamsInRange); err != nil {
-		return fmt.Errorf("failed search banch: %w", err)
+		return fmt.Errorf("failed search bench: %w", err)
+	}
+
+	if err := runMemoryBench(s, &bf.BenchMemory.FinishMemoryUsage); err != nil {
+		return fmt.Errorf("failed memory finish bench: %w", err)
 	}
 
 	if err := runStreamBench(benchDrop, s, bf, StreamDrop); err != nil {
-		return fmt.Errorf("failed drop banch: %w", err)
+		return fmt.Errorf("failed drop bench: %w", err)
 	}
+
+	bf.BenchMemory.DifferentMemoryUsage = getDifferentMemoryUsage(bf.BenchMemory)
 
 	return nil
 }

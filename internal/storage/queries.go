@@ -11,6 +11,11 @@ import (
 	"github.com/docker/docker/client"
 )
 
+func FileStats() error {
+	// TODO: получать характеристики файла
+	return nil
+}
+
 func GetDockerMemoryUsage(containerName string) (uint64, error) {
 	stat, err := DockerStats(containerName)
 	if err != nil {

@@ -7,6 +7,8 @@ import (
 	"os"
 
 	"github.com/gocql/gocql"
+
+	"github.com/VyacheslavIsWorkingNow/stream-data-processor/internal/storage"
 )
 
 type Storage struct {
@@ -14,10 +16,13 @@ type Storage struct {
 	ctx     context.Context
 }
 
-const Url = "CASSANDRA_URL"
+const (
+	url           = "CASSANDRA_URL"
+	containerName = "stream-data-processor-cassandra-1"
+)
 
 func New() (*Storage, error) {
-	cassandraURL := os.Getenv(Url)
+	cassandraURL := os.Getenv(url)
 	if len(cassandraURL) == 0 {
 		log.Fatalf("cassandraURL not find")
 	}
@@ -100,4 +105,8 @@ func (s *Storage) Info() {
 
 func (s *Storage) Name() string {
 	return "cassandra"
+}
+
+func (s *Storage) GetUsageMemory() (uint64, error) {
+	return storage.GetDockerMemoryUsage(containerName)
 }
