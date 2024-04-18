@@ -28,6 +28,10 @@ func RunBenchNCheck(s storage.Storage, countStreamPoints, countStreams, countChe
 		CountChecks:       countChecks,
 	}
 
+	if err := s.Ping(); err != nil {
+		return bf, fmt.Errorf("failed ping %w", err)
+	}
+
 	// TODO: вот тут подгружаю параметры bf в env
 	// TODO: потом сделаю красивее названия в env
 
@@ -38,8 +42,9 @@ func RunBenchNCheck(s storage.Storage, countStreamPoints, countStreams, countChe
 		}
 	}
 
-	// TODO: вот тут потом каждый event поделить на N, чтобы в отчете
-	// средняя писалась
+	for key, value := range bf.Durations {
+		bf.Durations[key] = value / time.Duration(bf.CountChecks)
+	}
 
 	return bf, nil
 }

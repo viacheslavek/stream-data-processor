@@ -38,7 +38,7 @@ func benchAdd(s storage.Storage) error {
 func addStreams(s storage.Storage) error {
 
 	// TODO: пока параметры делаю хардкодом, потом исправлю
-	streamGen := datagen.NewStreamsGenerator(datagen.NewStreamParams(500, 10, 100))
+	streamGen := datagen.NewStreamsGenerator(datagen.NewStreamParams(1000000, 25, 100))
 	streams := streamGen.GenerateStreams()
 	for _, stream := range streams {
 		if err := s.AddStream(stream); err != nil {
@@ -51,7 +51,7 @@ func addStreams(s storage.Storage) error {
 func benchSearch(s storage.Storage) error {
 	// TODO: заведу еще переменную startAddTime в env как UnixTime, в которую буду класть время начала для добавления
 	startAdd := time.Now()
-	countStreams, timePeriodMiliSec := 500, 100
+	countStreams, timePeriodMiliSec := 50000, 100
 	nRangeSearch := 1000
 
 	for i := 0; i < nRangeSearch; i++ {

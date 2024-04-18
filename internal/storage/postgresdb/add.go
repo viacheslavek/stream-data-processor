@@ -20,8 +20,6 @@ func (s *Storage) AddStream(stream internal.Stream) error {
 	q := fmt.Sprintf("INSERT INTO stream (time_point, points) VALUES ($1, array[%s]);",
 		getPointsQuery(stream.GetPoints()))
 
-	fmt.Println("q:", q)
-
 	layout := "2006-01-02 15:04:05.000000"
 
 	_, err = tx.Exec(s.ctx, q, stream.GetTimestamp().Format(layout))
