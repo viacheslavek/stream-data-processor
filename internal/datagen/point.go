@@ -5,14 +5,14 @@ import "github.com/VyacheslavIsWorkingNow/stream-data-processor/internal"
 type StreamParams struct {
 	countStreams  int
 	lenStream     int
-	miniSecPeriod int
+	miliSecPeriod int
 }
 
 func NewStreamParams(countStreams, lenStream, miniSecPeriod int) StreamParams {
 	return StreamParams{
 		countStreams:  countStreams,
 		lenStream:     lenStream,
-		miniSecPeriod: miniSecPeriod,
+		miliSecPeriod: miniSecPeriod,
 	}
 }
 

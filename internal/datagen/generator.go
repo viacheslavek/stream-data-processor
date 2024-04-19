@@ -23,7 +23,7 @@ func (ssg *StreamsGenerator) GenerateStreamChannel(cancel <-chan struct{}) <-cha
 	go func() {
 		defer close(out)
 
-		ticker := time.NewTicker(time.Duration(ssg.miniSecPeriod) * time.Millisecond)
+		ticker := time.NewTicker(time.Duration(ssg.miliSecPeriod) * time.Millisecond)
 		defer ticker.Stop()
 
 		for i := 0; i < ssg.countStreams; i++ {
@@ -67,7 +67,7 @@ func (ssg *StreamsGenerator) GenerateStreams() []internal.Stream {
 
 	for i := 0; i < ssg.countStreams; i++ {
 		streams[i] = generateStream(
-			startTimestamp.Add(time.Millisecond*time.Duration(ssg.miniSecPeriod*i)),
+			startTimestamp.Add(time.Millisecond*time.Duration(ssg.miliSecPeriod*i)),
 			ssg.lenStream,
 		)
 	}

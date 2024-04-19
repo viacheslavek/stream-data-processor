@@ -6,6 +6,8 @@ import (
 	"log"
 
 	"github.com/boltdb/bolt"
+
+	"github.com/VyacheslavIsWorkingNow/stream-data-processor/internal/storage"
 )
 
 type Storage struct {
@@ -77,4 +79,12 @@ func (s *Storage) Drop() error {
 
 func (s *Storage) Info() {
 	log.Println("cassandra")
+}
+
+func (s *Storage) Name() string {
+	return "boltdb"
+}
+
+func (s *Storage) GetUsageMemory() (uint64, error) {
+	return storage.GetFileSizes(dbPath)
 }

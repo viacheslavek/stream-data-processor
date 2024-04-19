@@ -7,6 +7,8 @@ import (
 	"os"
 
 	"github.com/jackc/pgx/v5"
+
+	"github.com/VyacheslavIsWorkingNow/stream-data-processor/internal/storage"
 )
 
 type Storage struct {
@@ -14,11 +16,14 @@ type Storage struct {
 	ctx  context.Context
 }
 
-const Url = "POSTGRES_URL"
+const (
+	url           = "POSTGRES_URL"
+	containerName = "stream-data-processor-postgres-1"
+)
 
 func New() (*Storage, error) {
 
-	postgresURL := os.Getenv(Url)
+	postgresURL := os.Getenv(url)
 
 	if len(postgresURL) == 0 {
 		log.Fatalf("postgresURL not find")
@@ -134,4 +139,12 @@ func (s *Storage) info(ctx context.Context, query string) error {
 	log.Println(output.RawValues())
 
 	return nil
+}
+
+func (s *Storage) Name() string {
+	return "postgres"
+}
+
+func (s *Storage) GetUsageMemory() (uint64, error) {
+	return storage.GetDockerMemoryUsage(containerName)
 }

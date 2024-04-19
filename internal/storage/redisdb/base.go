@@ -6,9 +6,14 @@ import (
 	"os"
 
 	"github.com/go-redis/redis"
+
+	"github.com/VyacheslavIsWorkingNow/stream-data-processor/internal/storage"
 )
 
-const streamName = "points_stream"
+const (
+	streamName    = "points_stream"
+	containerName = "stream-data-processor-redis-1"
+)
 
 type Storage struct {
 	client *redis.Client
@@ -74,4 +79,12 @@ func (s *Storage) Drop() error {
 
 func (s *Storage) Info() {
 	log.Println("redis")
+}
+
+func (s *Storage) Name() string {
+	return "redis"
+}
+
+func (s *Storage) GetUsageMemory() (uint64, error) {
+	return storage.GetDockerMemoryUsage(containerName)
 }
