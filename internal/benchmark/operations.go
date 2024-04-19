@@ -38,7 +38,7 @@ func benchAdd(s storage.Storage) error {
 func addStreams(s storage.Storage) error {
 
 	// TODO: пока параметры делаю хардкодом, потом исправлю
-	streamGen := datagen.NewStreamsGenerator(datagen.NewStreamParams(10, 10, 100))
+	streamGen := datagen.NewStreamsGenerator(datagen.NewStreamParams(10000, 100, 100))
 	streams := streamGen.GenerateStreams()
 	for _, stream := range streams {
 		if err := s.AddStream(stream); err != nil {

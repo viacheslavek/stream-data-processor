@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"os"
 
 	"github.com/docker/docker/api/types"
 	"github.com/docker/docker/api/types/container"
@@ -11,9 +12,13 @@ import (
 	"github.com/docker/docker/client"
 )
 
-func FileStats() error {
-	// TODO: получать характеристики файла
-	return nil
+func GetFileSizes(filepath string) (uint64, error) {
+	fileInfo, err := os.Stat(filepath)
+	if err != nil {
+		return 0, fmt.Errorf("failed get file stat %w", err)
+	}
+
+	return uint64(fileInfo.Size()), nil
 }
 
 func GetDockerMemoryUsage(containerName string) (uint64, error) {

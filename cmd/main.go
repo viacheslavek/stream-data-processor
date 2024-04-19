@@ -5,7 +5,7 @@ import (
 	"log"
 
 	"github.com/VyacheslavIsWorkingNow/stream-data-processor/internal/app"
-	"github.com/VyacheslavIsWorkingNow/stream-data-processor/internal/storage/redisdb"
+	"github.com/VyacheslavIsWorkingNow/stream-data-processor/internal/storage/boltdb"
 )
 
 func main() {
@@ -15,7 +15,7 @@ func main() {
 		log.Fatalf("failed load env: %e", errLE)
 	}
 
-	ps, errN := redisdb.New()
+	ps, errN := boltdb.New()
 	if errN != nil {
 		log.Fatalf("new is failed %e", errN)
 	}

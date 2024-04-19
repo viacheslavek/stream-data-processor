@@ -6,6 +6,8 @@ import (
 	"log"
 
 	"github.com/boltdb/bolt"
+
+	"github.com/VyacheslavIsWorkingNow/stream-data-processor/internal/storage"
 )
 
 type Storage struct {
@@ -84,6 +86,5 @@ func (s *Storage) Name() string {
 }
 
 func (s *Storage) GetUsageMemory() (uint64, error) {
-	// TODO: реализовать
-	return 0, nil
+	return storage.GetFileSizes(dbPath)
 }
